@@ -8,10 +8,11 @@ export default function MainLayout({children}:{children:ReactNode}){
             <Header></Header>
             <main>
             {children}
-            </main>
-            <section className="hidden xl:inline-grid">
+                 <section className="hidden xl:inline-grid">
               <Sidebar></Sidebar>
             </section>
+            </main>
+       
         </div>
     )
 }
