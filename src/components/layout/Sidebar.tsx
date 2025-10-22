@@ -1,6 +1,6 @@
 export default function Sidebar() {
     return (
-        <aside className="bg-clack flex flex-col">
+        <aside className="bg-black flex flex-col">
             <h2>sugerencias</h2>
             <ul>
 

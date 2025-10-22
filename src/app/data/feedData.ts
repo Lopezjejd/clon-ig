@@ -12,7 +12,7 @@ const user_viajero: User = {
   location: 'Kioto, Japón',
 };
 
-const user_dev: User = {
+export const user_dev: User = {
   id: 'u2',
   username: 'codigo_y_cafe',
   fullName: 'Juan Pérez',
@@ -55,7 +55,7 @@ export const MOCK_FEED_POSTS: Post[] = [
   {
     id: 'p2',
     user: user_dev,
-    imageUrl: '/assets/post-code.jpg',
+    imageUrl: '/post/post-code.jpg',
     caption: '¡Por fin terminé el diseño del layout! Nada como un buen café para celebrar el avance. #Nextjs #ReactDev',
     likes: 450,
     isLikedByCurrentUser: false,
