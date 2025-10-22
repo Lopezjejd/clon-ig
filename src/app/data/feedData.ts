@@ -8,7 +8,7 @@ const user_viajero: User = {
   id: 'u1',
   username: 'viajero_digital',
   fullName: 'Elena Ríos',
-  profilePicture: '/assets/pfp-viajero.jpg', 
+  profilePicture: '/avatars/pfp-viajero.jpg', 
   location: 'Kioto, Japón',
 };
 
@@ -16,7 +16,7 @@ const user_dev: User = {
   id: 'u2',
   username: 'codigo_y_cafe',
   fullName: 'Juan Pérez',
-  profilePicture: '/assets/pfp-dev.jpg',
+  profilePicture: '/avatars/pfp-dev.jpg',
   location: 'Remoto',
 };
 
@@ -32,7 +32,7 @@ export const MOCK_FEED_POSTS: Post[] = [
   {
     id: 'p1',
     user: user_viajero,
-    imageUrl: '/assets/post-kioto.jpg',
+    imageUrl: '/post/post-kioto.jpg',
     caption: 'La neblina matutina en Arashiyama es pura magia. ¡Necesitas visitar este bosque de bambú!',
     likes: 1245,
     isLikedByCurrentUser: true,
