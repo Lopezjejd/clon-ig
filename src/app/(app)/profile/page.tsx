@@ -20,7 +20,8 @@ export default function UserProfile() {
         <div className="flex-1">
           <div className="flex items-center gap-4 mb-4">
             <h1 className="text-2xl font-light">{currentUser.username}</h1>
-            <button className="px-4 py-1 bg-gray-100 hover:bg-gray-200 rounded-md text-sm font-medium transition-colors">
+            <button
+             className="px-4 text-black py-1 bg-gray-100 hover:bg-gray-200 rounded-md text-sm font-medium transition-colors">
               Editar perfil
             </button>
           </div>
