@@ -1,7 +1,7 @@
-import { user_dev } from "@/app/data/feedData"
+import { MOCK_USERS } from "@/app/data/UsersData"
 
 export default function UserProfile() {
-  const currentUser = user_dev
+  const currentUser = MOCK_USERS[0]; // Simula el usuario logueado
 
   return (
     <section className="max-w-4xl mx-auto p-4">
