@@ -2,30 +2,8 @@
 
 import { Post } from '@/types/Post'; // Usa el alias de ruta si lo tienes configurado
 import { User } from '@/types/User'; 
+import { user_viajero, user_dev, user_fan } from './UsersData';
 
-// --- 1. Definición de Usuarios de Prueba ---
-const user_viajero: User = {
-  id: 'u1',
-  username: 'viajero_digital',
-  fullName: 'Elena Ríos',
-  profilePicture: '/avatars/pfp-viajero.jpg', 
-  location: 'Kioto, Japón',
-};
-
-const user_dev: User = {
-  id: 'u2',
-  username: 'codigo_y_cafe',
-  fullName: 'Juan Pérez',
-  profilePicture: '/avatars/pfp-dev.jpg',
-  location: 'Remoto',
-};
-
-const user_fan: User = {
-    id: 'u3',
-    username: 'best_fan_ever',
-    fullName: 'Ana Gómez',
-    profilePicture: '/assets/pfp-fan.jpg',
-};
 
 // --- 2. Feed de Posts ---
 export const MOCK_FEED_POSTS: Post[] = [
@@ -55,7 +33,7 @@ export const MOCK_FEED_POSTS: Post[] = [
   {
     id: 'p2',
     user: user_dev,
-    imageUrl: '/assets/post-code.jpg',
+    imageUrl: '/post/post-code.jpg',
     caption: '¡Por fin terminé el diseño del layout! Nada como un buen café para celebrar el avance. #Nextjs #ReactDev',
     likes: 450,
     isLikedByCurrentUser: false,

@@ -8,6 +8,8 @@ interface Props{
 export default function PostFeed({post}:Props){
 return (
         <article className="bg-gray-200
+        m-auto
+        max-w-xl
         p-10
         text-black flex flex-col justify-center"
     >
