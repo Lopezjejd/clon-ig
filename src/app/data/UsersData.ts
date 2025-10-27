@@ -1,10 +1,16 @@
 import { User } from '@/types/User'; 
+
 export const user_viajero: User = {
   id: 'u1',
   username: 'viajero_digital',
   fullName: 'Elena Ríos',
   profilePicture: '/avatars/pfp-viajero.jpg',
   location: 'Kioto, Japón',
+  stories: {
+    mediaUrl: '/stories/1.jpg',
+    createdAt: new Date('2024-06-20T10:00:00Z'),
+  
+  }
 };
 
 export const user_dev: User = {

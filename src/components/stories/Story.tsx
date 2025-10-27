@@ -7,15 +7,19 @@ import type { User } from '@/types/User';
 interface StoryProps {
   user: User;
   isYours?: boolean; // Para diferenciar tu historia (Tu story)
+  onOpenViewer: (id:string) => void; // Callback para abrir el visor de historias
 }
 
-export default function Story({ user, isYours = false }: StoryProps) {
+export default function Story({ user, isYours = false,onOpenViewer }: StoryProps) {
   // El tamaño visual es 64x64px (w-16 h-16), por lo que usamos 64 como referencia.
   const avatarSize = 64; 
   
   return (
     // Contenedor principal de la historia
-    <div className="flex flex-col items-center shrink-0 cursor-pointer">
+    <div className="flex flex-col items-center shrink-0 cursor-pointer"
+    onClick={() => onOpenViewer(user.id)}
+
+    >
       
       {/* Marco del Avatar con el Gradiente (simulando el borde de la historia) */}
       <div 

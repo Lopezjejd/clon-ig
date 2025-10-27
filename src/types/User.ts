@@ -5,5 +5,5 @@ export interface User {
     profilePicture:string;
     fullName:string;
     location?:string;
-    stories?:Story[];
+    stories?:Story;
 }
