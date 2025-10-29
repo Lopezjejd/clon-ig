@@ -56,22 +56,26 @@ export default function Viewer({ isOpen, onClose, children }: Props) {
       onMouseDown={(e) => { if (e.target === e.currentTarget) onClose(); }}
     >
       {/* backdrop */}
-      <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" />
+      <div className="absolute inset-0 bg-black/50 backdrop-blur-sm"
+      onClick={onClose}
+       />
 
       {/* modal box */}
       <div
-        className="relative z-10 w-[min(900px,95%)] max-h-[90vh] overflow-auto bg-white rounded-lg shadow-2xl p-4"
+        className="relative z-10 w-[min(900px,95%)] max-h-[90vh] overflow-auto bg-transparent rounded-lg p-4"
         tabIndex={-1}
       >
         <button
           aria-label="Cerrar"
           onClick={onClose}
-          className="absolute top-3 right-3 text-gray-700 hover:text-black"
+          className="absolute top-0 right-3 font-extrabold text-gray-50 hover:text-black
+          text-2xl leading-none drop-shadow-black portrait:
+          cursor-pointer "
         >
           ✕
         </button>
 
-        <div className="mt-2">{children}</div>
+        <div className="mt-2 overflow-hidden">{children}</div>
       </div>
     </div>
   );

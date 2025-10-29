@@ -16,7 +16,7 @@ export default function Story({ user, isYours = false,onOpenViewer }: StoryProps
   
   return (
     // Contenedor principal de la historia
-    <div className="flex flex-col items-center shrink-0 cursor-pointer"
+    <div className="flex flex-col items-center text-black shrink-0 cursor-pointer"
     onClick={() => onOpenViewer(user.id)}
 
     >

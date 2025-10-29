@@ -1,16 +1,17 @@
 "use client"
-
-import { useState,useEffect } from 'react';
+import Image from 'next/image';
+import { useState,useEffect,useRef } from 'react';
 import Story from "./Story";
 import type { User } from '@/types/User';
-import type { Story as StoryType } from '@/types/Story';
 import Viewer from './StoryViewer';
+import UserProfile from "@/components/user/UserProfile"
 interface StoriesContainerProps {
   currentUser: User;
 
     users: User[];
 
 }
+const INTERVAL_TIME = 5000; // 5 segundos
 
 export default function StoriesContainer({currentUser, users}: StoriesContainerProps) {
      const [openId, setOpenId] = useState<string | null>(null);
@@ -19,6 +20,25 @@ export default function StoriesContainer({currentUser, users}: StoriesContainerP
     setOpenId(id);
   };
   const close = () => setOpenId(null);
+  const intervalIdRef = useRef<NodeJS.Timeout | null>(null);
+  useEffect(() => {
+    if (!openId)  return;
+     const updateStory = () => {
+        setOpenId((prevId) => {
+            if (!prevId) return null;
+            const currentIndex = users.findIndex((u) => u.id === prevId);
+            const nextIndex = (currentIndex + 1) % users.length;
+            return users[nextIndex].id;
+        });
+     }
+        intervalIdRef.current = setInterval(updateStory, INTERVAL_TIME);
+        return () => {
+            if (intervalIdRef.current !== null){
+                clearInterval(intervalIdRef.current);
+                intervalIdRef.current = null;
+            }
+            } 
+  }), [openId, users];
 
   const current = users.find((u) => u.id === openId) ?? null;
     return (
@@ -51,20 +71,30 @@ export default function StoriesContainer({currentUser, users}: StoriesContainerP
         })
       }
         {/* Story Viewer Modal */}
-       <Viewer isOpen={!!openId} onClose={close}>
-        {/* lo mínimo para renderizar la historia por id */}
-        {current ? (
-          <div className="space-y-3">
-       
-            {current.stories  ? (
-              <img src={current.stories.mediaUrl} alt={"historia de un usuario"} className="w-full rounded-md" />
-            ) : null}
-           
-          </div>
-        ) : (
-          <div className="py-12">Cargando...</div>
-        )}
-      </Viewer>
+<Viewer isOpen={!!openId} onClose={close}>
+  {current?.stories ? (
+    <div className="w-full h-[80vh] grid place-items-center overflow-y-hidden">
+      {/* contenedor que limita ancho máximo y evita overflow */}
+      <div className="relative w-full h-full max-w-[900px] max-h-full rounded-md p-1 overflow-hidden bg-black">
+         <UserProfile user={current} className='text-white absolute' ></UserProfile>
+        {/* 
+          - fill hace que la <Image /> llene el contenedor relativo
+          - object-contain mantiene la relación y centra la imagen
+        */}
+        <Image
+          src={current.stories.mediaUrl}
+          alt={current.username ?? "Historia de usuario"}
+          fill
+          className="object-contain"
+          sizes="(max-width: 900px) 95vw, 900px"
+          priority={false}
+        />
+      </div>
+    </div>
+  ) : (
+    <div className="py-12">Cargando...</div>
+  )}
+</Viewer>
     </div>
     )
 }

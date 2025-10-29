@@ -3,7 +3,7 @@ import { User } from '@/types/User';
 export const user_viajero: User = {
   id: 'u1',
   username: 'viajero_digital',
-  fullName: 'Elena Ríos',
+  fullName: 'mipe nemoto',
   profilePicture: '/avatars/pfp-viajero.jpg',
   location: 'Kioto, Japón',
   stories: {
@@ -19,14 +19,22 @@ export const user_dev: User = {
   fullName: 'Juan Pérez',
   profilePicture: '/avatars/pfp-dev.jpg',
   location: 'Remoto',
+  stories: {
+    mediaUrl: '/stories/2.jpg',
+    createdAt: new Date('2024-06-21T14:30:00Z'),
+  }
 };
 
 export const user_fan: User = {
   id: 'u3',
   username: 'best_fan_ever',
   fullName: 'Ana Gómez',
-  profilePicture: '/avatars/pfp-fan.jpg',
+  profilePicture: '/avatars/default.webp',
   location: 'Madrid, España',
+  stories: {
+    mediaUrl: '/stories/3.jpg',
+    createdAt: new Date('2024-06-22T09:15:00Z'),
+  }
 };
 
 // --- Nuevos Usuarios Adicionales ---
@@ -35,8 +43,12 @@ export const user_foodie: User = {
   id: 'u4',
   username: 'sabor_local',
   fullName: 'Carlos Ruiz',
-  profilePicture: '/avatars/pfp-foodie.jpg',
+  profilePicture: '/avatars/default.webp',
   location: 'Ciudad de México',
+  stories: {
+    mediaUrl: '/stories/4.jpg',
+    createdAt: new Date('2024-06-23T18:45:00Z'),
+  }
 };
 
 export const user_photographer: User = {
