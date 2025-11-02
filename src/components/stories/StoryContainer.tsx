@@ -11,7 +11,7 @@ interface StoriesContainerProps {
     users: User[];
 
 }
-const INTERVAL_TIME = 5000; // 5 segundos
+const INTERVAL_TIME = 4000; // 5 segundos
 
 export default function StoriesContainer({currentUser, users}: StoriesContainerProps) {
      const [openId, setOpenId] = useState<string | null>(null);
@@ -21,14 +21,27 @@ export default function StoriesContainer({currentUser, users}: StoriesContainerP
   };
   const close = () => setOpenId(null);
   const intervalIdRef = useRef<NodeJS.Timeout | null>(null);
+  const usersWithStories = users.filter((user) => user.stories && user.stories.mediaUrl);
   useEffect(() => {
     if (!openId)  return;
      const updateStory = () => {
         setOpenId((prevId) => {
             if (!prevId) return null;
-            const currentIndex = users.findIndex((u) => u.id === prevId);
-            const nextIndex = (currentIndex + 1) % users.length;
-            return users[nextIndex].id;
+            if(usersWithStories.length ===  0) return null;
+        
+            const currentIndex = usersWithStories.findIndex((u) => u.id === prevId);
+            if (currentIndex === -1) return null;
+
+            
+            const nextIndex = (currentIndex + 1) ;
+            //% se usa para volver al inicio
+            if(nextIndex >= usersWithStories.length  ) return null
+            //   
+
+
+
+            //ya que si nextIndex es igual a users.length, vuelve a 0
+            return usersWithStories[nextIndex].id;
         });
      }
         intervalIdRef.current = setInterval(updateStory, INTERVAL_TIME);
@@ -38,7 +51,7 @@ export default function StoriesContainer({currentUser, users}: StoriesContainerP
                 intervalIdRef.current = null;
             }
             } 
-  }), [openId, users];
+  }), [openId, usersWithStories];
 
   const current = users.find((u) => u.id === openId) ?? null;
     return (
@@ -74,9 +87,11 @@ export default function StoriesContainer({currentUser, users}: StoriesContainerP
 <Viewer isOpen={!!openId} onClose={close}>
   {current?.stories ? (
     <div className="w-full h-[80vh] grid place-items-center overflow-y-hidden">
+     
       {/* contenedor que limita ancho máximo y evita overflow */}
-      <div className="relative w-full h-full max-w-[900px] max-h-full rounded-md p-1 overflow-hidden bg-black">
-         <UserProfile user={current} className='text-white absolute' ></UserProfile>
+      <div className="relative w-full h-full max-w-[900px] max-h-full rounded-md p-1  overflow-hidden bg-black">
+    
+         <UserProfile user={current} className='text-white absolute top-4' ></UserProfile>
         {/* 
           - fill hace que la <Image /> llene el contenedor relativo
           - object-contain mantiene la relación y centra la imagen

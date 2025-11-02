@@ -1,6 +1,6 @@
 // components/stories/Viewer.tsx
 "use client";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef,useState } from "react";
 import { createPortal } from "react-dom";
 
 type Props = {
@@ -45,7 +45,10 @@ export default function Viewer({ isOpen, onClose, children }: Props) {
       document.body.style.overflow = prevOverflowRef.current;
     };
   }, [isOpen, onClose]);
-
+  const [barStory, setBarStory] = useState(0);
+useEffect(()=>{
+    setBarStory(barStory + 1);
+},[children])
   if (!isOpen || !elRef.current) return null;
 
   const content = (
@@ -74,7 +77,17 @@ export default function Viewer({ isOpen, onClose, children }: Props) {
         >
           ✕
         </button>
+ {
+  barStory > 0 &&
+       <div
+       key={barStory}
+        className='w-[70%] border border-gray-600 p-1 m-auto mb-2 rounded-2xl left-1/6 absolute 
+        top-7  z-40 ' >
+        <div className="w-1/2 h-1 bg-amber-50 animate-expand " ></div>
+      </div> 
 
+      
+ }
         <div className="mt-2 overflow-hidden">{children}</div>
       </div>
     </div>
