@@ -5,6 +5,8 @@ import type { Comment } from "@/types/Comment";
 import UserProfile from "../user/UserProfile";
 import CommentTextarea from "./CommentTextarea";
 import UsePostStore from "@/store/usePost";
+import ScrollableModal from "./ScrollableModal";
+import { useState } from "react";
 interface Props{
     post:Post;
 }
@@ -19,6 +21,9 @@ export default function PostFeed({post}:Props){
         };
         addComment(post.id,newComment);
         }
+        const [isModalOpen, setIsModalOpen] = useState(false);
+        const openModal = () => setIsModalOpen(true);
+        const closeModal = () => setIsModalOpen(false);
 return (
         <article className="bg-gray-200
         m-auto
@@ -37,13 +42,30 @@ return (
          <div className="flex flex-col justify-center
          bg-gray-300 p-5 rounded-b-2xl">
             <p className="font-bold">{post.caption}</p>
-            <span>
+            <span className="flex m-2 gap-4">
                 <button className="cursor-pointer"
                 onClick={() => toggleLike(post.id)}
-            >❤️
+            >❤️ {post.likes}
                 </button>
-                {post.likes}</span>
-            <ul className="bg-gray-200 p-3">
+                <button className="cursor-pointer inline-flex  items-center gap-1 ml-4"
+                onClick={openModal}
+                >
+                
+<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" aria-hidden="true" role="img">
+  <title>Comentario</title>
+  <rect x="2" y="3" width="20" height="14" rx="2" ry="2" fill="none" stroke="#000" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M7 21l3-4h7" fill="none" stroke="#000" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M8 7h8" fill="none" stroke="#000" stroke-width="1.4" stroke-linecap="round" />
+  <path d="M8 10h6" fill="none" stroke="#000" stroke-width="1.4" stroke-linecap="round" />
+</svg>
+   { post.comments.length}
+                </button>
+               </span>
+
+
+            <ScrollableModal isOpen={isModalOpen} onClose={closeModal} title="Comments">
+
+            <ul className="bg-gray-200 p-3 w-full h-full overflow-y-auto flex flex-col gap-4">
              {post.comments.length > 0 && post.comments.map((comment:Comment)=>{
               return (
                         <li
@@ -66,7 +88,10 @@ return (
                     </li>
               )
                 })}
+                   <CommentTextarea onPost={handleAddComment} className="" ></CommentTextarea>
             </ul>
+          
+            </ScrollableModal>
              <CommentTextarea onPost={handleAddComment} ></CommentTextarea>
          </div>
     </article>

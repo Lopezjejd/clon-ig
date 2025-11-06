@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 
 // Definición de tipos para las props (TypeScript)
 interface CommentTextareaProps {
+  className?: string;
   placeholder?: string;
   onPost: (text: string) => void;
   // Opcional para Tailwind v4: usar 'group' si está configurado en tu tailwind.config
@@ -12,7 +13,7 @@ interface CommentTextareaProps {
  * Textarea de comentarios con auto-ajuste (auto-resize) y botón de Publicar.
  * Ideal para el campo de comentarios de un clon de Instagram.
  */
-const CommentTextarea: React.FC<CommentTextareaProps> = ({ placeholder = 'Añade un comentario...', onPost }) => {
+const CommentTextarea: React.FC<CommentTextareaProps> = ({className = "" ,placeholder = 'Añade un comentario...', onPost }) => {
   const [text, setText] = useState('');
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   
@@ -44,7 +45,7 @@ const CommentTextarea: React.FC<CommentTextareaProps> = ({ placeholder = 'Añade
   const isButtonDisabled = text.trim().length === 0;
 
   return (
-    <div className="flex w-full items-end p-2 sm:p-3 border-t border-gray-200 bg-white dark:bg-zinc-900 dark:border-zinc-700">
+    <div className={`flex w-full items-end p-2 sm:p-3 border-t rounded-3xl border-gray-200 bg-white dark:bg-zinc-900 dark:border-zinc-700${className}`}>
       
       {/* Icono de Emoji (Opcional para mejorar la estética) */}
       <button 
@@ -76,6 +77,8 @@ const CommentTextarea: React.FC<CommentTextareaProps> = ({ placeholder = 'Añade
         onClick={handlePost}
         disabled={isButtonDisabled}
         className={`
+          pb-1 pr-1
+          cursor-pointer
           text-sm font-semibold transition-colors duration-200
           ${isButtonDisabled 
             ? 'text-blue-300 dark:text-blue-700 cursor-not-allowed' 
