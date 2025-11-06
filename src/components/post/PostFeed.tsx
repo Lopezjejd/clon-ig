@@ -3,10 +3,22 @@ import type {Post} from "@/types/Post"
 import Image from "next/image";
 import type { Comment } from "@/types/Comment";
 import UserProfile from "../user/UserProfile";
+import CommentTextarea from "./CommentTextarea";
+import UsePostStore from "@/store/usePost";
 interface Props{
     post:Post;
 }
 export default function PostFeed({post}:Props){
+    const {toggleLike,addComment}=UsePostStore(); 
+    const handleAddComment=(text:string)=>{
+        const newComment:Comment={
+            id:post.user.id + '-' + Date.now().toString(),
+            user:post.user,
+            text:text,
+            timeAgo:Date.now().toString()
+        };
+        addComment(post.id,newComment);
+        }
 return (
         <article className="bg-gray-200
         m-auto
@@ -27,6 +39,7 @@ return (
             <p className="font-bold">{post.caption}</p>
             <span>
                 <button className="cursor-pointer"
+                onClick={() => toggleLike(post.id)}
             >❤️
                 </button>
                 {post.likes}</span>
@@ -54,6 +67,7 @@ return (
               )
                 })}
             </ul>
+             <CommentTextarea onPost={handleAddComment} ></CommentTextarea>
          </div>
     </article>
 )
