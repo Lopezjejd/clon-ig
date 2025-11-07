@@ -51,12 +51,11 @@ return (
                 onClick={openModal}
                 >
                 
-<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" aria-hidden="true" role="img">
-  <title>Comentario</title>
-  <rect x="2" y="3" width="20" height="14" rx="2" ry="2" fill="none" stroke="#000" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
-  <path d="M7 21l3-4h7" fill="none" stroke="#000" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
-  <path d="M8 7h8" fill="none" stroke="#000" stroke-width="1.4" stroke-linecap="round" />
-  <path d="M8 10h6" fill="none" stroke="#000" stroke-width="1.4" stroke-linecap="round" />
+<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path 
+    fill="currentColor"
+    d="M20.656 2.344H3.344C2.612 2.344 2 2.956 2 3.688V16.312C2 17.044 2.612 17.656 3.344 17.656H6.625V21.656L11.312 17.656H20.656C21.388 17.656 22 17.044 22 16.312V3.688C22 2.956 21.388 2.344 20.656 2.344ZM7 9H17V11H7V9ZM7 13H14V15H7V13Z"
+  />
 </svg>
    { post.comments.length}
                 </button>
@@ -65,7 +64,7 @@ return (
 
             <ScrollableModal isOpen={isModalOpen} onClose={closeModal} title="Comments">
 
-            <ul className="bg-gray-200 p-3 w-full h-full overflow-y-auto flex flex-col gap-4">
+            <ul className="bg-gray-200 relative p-3 w-full h-100 overflow-y-auto flex flex-col gap-4">
              {post.comments.length > 0 && post.comments.map((comment:Comment)=>{
               return (
                         <li
@@ -88,7 +87,7 @@ return (
                     </li>
               )
                 })}
-                   <CommentTextarea onPost={handleAddComment} className="" ></CommentTextarea>
+                   <CommentTextarea onPost={handleAddComment} className="z-20 fixed bottom-20 right-[10%]" ></CommentTextarea>
             </ul>
           
             </ScrollableModal>

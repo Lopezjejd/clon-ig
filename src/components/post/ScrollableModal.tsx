@@ -1,13 +1,13 @@
 import { Dialog, Transition } from '@headlessui/react';
 import { Fragment, ReactNode } from 'react';
 import React from 'react';
+
 interface ScrollableModalProps {
   isOpen: boolean;
   onClose: () => void;
   title: string;
   children: ReactNode;
 }
-// ... (Interface ScrollableModalProps sin cambios)
 
 const ScrollableModal: React.FC<ScrollableModalProps> = ({ isOpen, onClose, title, children }) => {
   return (
@@ -27,48 +27,59 @@ const ScrollableModal: React.FC<ScrollableModalProps> = ({ isOpen, onClose, titl
           <div className="fixed inset-0 bg-black/50 backdrop-blur-sm" />
         </Transition.Child>
 
-        {/* 1. CONTENEDOR EXTERNO: Alineación a la parte inferior (cambio clave) */}
+        {/* 1. CONTENEDOR EXTERNO: Alineación a la parte inferior */}
         <div className="fixed inset-0 overflow-y-auto">
-          {/* CAMBIO CLAVE: Usamos items-end en lugar de items-center para mover la modal abajo */}
           <div className="flex min-h-full items-end justify-center text-center">
             
-            {/* 2. PANEL DE LA MODAL: Dimensiones y Animación de Deslizamiento */}
+            {/* 2. PANEL DE LA MODAL: Dimensiones y Animación */}
             <Transition.Child
               as={Fragment}
-              // ANIMACIÓN DE ENTRADA: Desliza desde abajo (translate-y-full)
               enter="ease-out duration-300 transform transition-all"
               enterFrom="opacity-0 translate-y-full"
               enterTo="opacity-100 translate-y-0"
-              // ANIMACIÓN DE SALIDA: Desliza hacia abajo (translate-y-full)
               leave="ease-in duration-200 transform transition-all"
               leaveFrom="opacity-100 translate-y-0"
               leaveTo="opacity-0 translate-y-full"
             >
               <Dialog.Panel 
-                // DIMENSIONES: w-full (ancho completo) y max-w-[1200px]
-                // ALTURA: min-h-[80vh] (80% del viewport) y rounded-t-xl (solo arriba)
-                className="w-full max-w-[1200px] min-h-[80vh] transform overflow-hidden rounded-t-xl 
-                           bg-white p-4 text-left shadow-2xl transition-all dark:bg-zinc-800"
+                // ✨ CAMBIO 1: Convertir la Modal en un Contenedor Flex de Columna (flex-col)
+                // y usar p-0 para gestionar el padding en hijos.
+                className="w-full max-w-[1200px] min-h-[80vh] flex flex-col transform overflow-hidden rounded-t-xl 
+                           bg-white text-left shadow-2xl transition-all dark:bg-zinc-800"
               >
                 
-                {/* Título de la Modal */}
+                {/* Título de la Modal (Fijo, no se mueve) */}
                 <Dialog.Title
                   as="h3"
-                  className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2 pb-2 border-b dark:border-zinc-700"
+                  // Padding en el título para dejar espacio
+                  className="text-lg font-semibold text-gray-900 dark:text-gray-100 p-4 pb-2 border-b dark:border-zinc-700 shrink-0"
                 >
                   {title}
                 </Dialog.Title>
 
-                {/* Área del Contenido con Scroll Vertical */}
-                {/* CLAVE: La altura máxima se basa en el espacio restante dentro de la modal (h-full) */}
+                {/* 🌟 CAMBIO 2: Área del Contenido (Flex-grow y Sin Scroll) 🌟 */}
                 <div 
-                  className="mt-2 h-full overflow-y-auto pb-8 pr-2" 
+                  // Usamos flex-grow para que ocupe el espacio restante verticalmente
+                  // p-4 para el padding interno y h-full para asegurar la altura
+                  className="p-4 pt-2 grow overflow-hidden"
                 >
+                  {/*
+                    Aquí el hijo (children) recibirá todo el espacio restante. 
+                    El hijo debe manejar su propio scroll.
+                  */}
                   {children}
                 </div>
 
-                {/* Nota: Se recomienda mover el botón de cierre si el título está claro, 
-                   o mantenerlo flotante si es necesario, pero lo dejamos aquí por simplicidad. */}
+                {/* Pie/Botón de Cierre (Fijo, no se mueve) */}
+                <div className="p-4 pt-2 shrink-0 border-t dark:border-zinc-700">
+                  <button
+                    type="button"
+                    className="w-full inline-flex justify-center rounded-md border border-transparent bg-blue-100 px-4 py-2 text-sm font-medium text-blue-900 hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 dark:bg-blue-700 dark:text-white"
+                    onClick={onClose}
+                  >
+                    Cerrar
+                  </button>
+                </div>
               </Dialog.Panel>
             </Transition.Child>
           </div>

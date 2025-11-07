@@ -45,7 +45,7 @@ const CommentTextarea: React.FC<CommentTextareaProps> = ({className = "" ,placeh
   const isButtonDisabled = text.trim().length === 0;
 
   return (
-    <div className={`flex w-full items-end p-2 sm:p-3 border-t rounded-3xl border-gray-200 bg-white dark:bg-zinc-900 dark:border-zinc-700${className}`}>
+    <div className={`flex w-[80%]  items-end p-2 sm:p-3 border-t rounded-3xl border-gray-200 bg-white dark:bg-zinc-900 dark:border-zinc-700  ${className}`}>
       
       {/* Icono de Emoji (Opcional para mejorar la estética) */}
       <button 
