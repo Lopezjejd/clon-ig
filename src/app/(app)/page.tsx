@@ -1,17 +1,15 @@
 import { Post } from "@/types/Post";
 import { MOCK_FEED_POSTS } from "../data/feedData";
+import FeedMain from "@/components/post/PostFeedContainer";
 
-import PostFeed  from "@/components/post/PostFeed";
 import StoriesBar from "@/components/stories/StoriesBar";
-export default async function FeedMain(){
-    const postUser = await MOCK_FEED_POSTS
+export default async function FeedMainPage(){
+
 return(
     
 <section>
     <StoriesBar></StoriesBar>
-    {postUser && postUser.map((post:Post) =>{
-       return <PostFeed key={post.id} post={post}></PostFeed>
-    })}
+    <FeedMain initialPosts={MOCK_FEED_POSTS}></FeedMain>
 </section>
 )
 
