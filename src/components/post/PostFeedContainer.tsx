@@ -14,6 +14,10 @@ export default function FeedMain({ initialPosts }: FeedMainProps) {
     
     // Obtenemos posts del store (será el array actualizado)
     const { setPosts, posts } = usePostStore();
+    useEffect(() => {
+        console.log("Posts in store:", posts);
+    }, [posts]);
+    
     
     // 3. Usa useEffect para cargar los datos solo UNA VEZ
     useEffect(() => {

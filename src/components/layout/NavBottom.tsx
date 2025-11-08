@@ -21,7 +21,15 @@ export default function NavBottom() {
           href="/explore" 
           className={`p-3 ${isActive('/explore') ? 'text-blue-500' : 'text-gray-600'}`}
         >
+ 
           🔍
+        </Link>
+                 {/* ✨ NUEVO: Link a la Página de Crear Post ✨ */}
+        <Link 
+          href="/create" 
+          className={`p-3 text-lg ${isActive('/create') ? 'text-blue-500' : 'text-gray-600 dark:text-gray-400'}`}
+        >
+          ➕
         </Link>
         <Link 
           href="/profile" 

@@ -64,7 +64,7 @@ return (
 
             <ScrollableModal isOpen={isModalOpen} onClose={closeModal} title="Comments">
 
-            <ul className="bg-gray-200 relative p-3 w-full h-100 overflow-y-auto flex flex-col gap-4">
+            <ul className=" relative p-3 w-full h-100 overflow-y-auto flex flex-col gap-4">
              {post.comments.length > 0 && post.comments.map((comment:Comment)=>{
               return (
                         <li
