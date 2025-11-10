@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-
+import { LOGGED_IN_USER } from '@/app/data/UsersData'
 export default function NavBottom() {
   const pathname = usePathname()
 
@@ -32,7 +32,7 @@ export default function NavBottom() {
           ➕
         </Link>
         <Link 
-          href="/profile" 
+          href={`/profile/${LOGGED_IN_USER.id}`}
           className={`p-3 ${isActive('/profile') ? 'text-blue-500' : 'text-gray-600'}`}
         >
           👤
