@@ -1,9 +1,7 @@
-'use client';
-
-import React, { useEffect, useState } from 'react';
-import { MOCK_USERS } from "@/app/data/UsersData";
-import { useParams, useRouter } from "next/navigation";
-import { LOGGED_IN_USER } from "@/app/data/UsersData";
+// app/users/[userId]/page.tsx  (Server Component)
+import React from 'react'
+import { notFound } from 'next/navigation'
+import { MOCK_USERS, LOGGED_IN_USER } from '@/app/data/UsersData'
 
 // Tipado opcional: ajusta según tu proyecto
 type User = {
@@ -13,54 +11,39 @@ type User = {
   profilePicture?: string;
   location?: string;
   // ...otros campos
-};
+}
 
-export default function UserProfilePage() {
-  const params = useParams(); // puede ser undefined durante hidratación
-  const router = useRouter();
+type Props = { params?: { userId?: string; id?: string } }
 
-  // Estado local para manejar sincronía: undefined = loading, null = not found, User = encontrado
-  const [user, setUser] = useState<User | null | undefined>(undefined);
+export default async function UserProfilePage({ params }: Props) {
+  // Extraer param de forma defensiva (igual que en tu versión cliente)
+  const targetUserId = params?.id ?? null
 
-  // Extraer param de forma defensiva
-  const targetUserId = params?.userId ?? params?.id ?? undefined;
-  // console para debugging
-  console.log('useParams raw:', params, ' -> targetUserId:', targetUserId);
+  // Debug server-side (aparecerá en logs)
+  console.log('Server params raw:', params, ' -> targetUserId:', targetUserId)
 
-  // Cuando el param exista, buscar el usuario en el mock
-  useEffect(() => {
-    if (!targetUserId) {
-      // todavía no tenemos params (hidratación) -> quedamos en loading
-      setUser(undefined);
-      return;
-    }
-
-    const found = MOCK_USERS.find((u) => u.id === targetUserId) ?? null;
-    setUser(found);
-  }, [targetUserId]);
-
-  // Si no encontramos usuario, redirigimos a una 404 (client-safe) después de setear el estado
-  useEffect(() => {
-    if (user === null) {
-      // reemplaza la ruta por la página 404 del sitio o muestra un fallback
-      router.replace('/404'); // o router.push('/not-found') según tu app
-    }
-  }, [user, router]);
-
-  // Mientras el param no esté listo o estemos buscando -> mostrar nada o un loading simple
-  if (user === undefined) {
+  // Si no hay param: mostramos el mismo loading simple que tenías
+  if (!targetUserId) {
     return (
       <section className="max-w-4xl mx-auto p-4 pt-10">
         <div className="text-center py-12 text-gray-500">Cargando perfil...</div>
       </section>
-    );
+    )
   }
 
-  // Si user === null, ya estamos redirigiendo; render vacío para evitar flash
-  if (user === null) return null;
+  // Buscar usuario en el mock (igual que tu lógica)
+  const found = MOCK_USERS.find((u) => u.id === targetUserId) ?? null
+
+  // Si no existe, hacemos un notFound() server-side (redirige a 404)
+  if (found === null) {
+    console.log('User not found for id:', targetUserId)
+    return notFound()
+  }
+
+  const user: User = found
 
   // isCurrentUser (igual que antes)
-  const isCurrentUser = user.id === LOGGED_IN_USER.id;
+  const isCurrentUser = user.id === LOGGED_IN_USER.id
 
   return (
     <section className="max-w-4xl mx-auto p-4 pt-10">
@@ -68,8 +51,8 @@ export default function UserProfilePage() {
       <div className="flex items-center gap-8 md:gap-16 mb-8">
         {/* Foto de perfil */}
         <div className="w-24 h-24 md:w-32 md:h-32 rounded-full overflow-hidden border-2 border-gray-300 dark:border-zinc-700">
-          <img 
-            src={user.profilePicture} 
+          <img
+            src={user.profilePicture}
             alt={`Perfil de ${user.username}`}
             className="w-full h-full object-cover"
           />
@@ -79,7 +62,7 @@ export default function UserProfilePage() {
         <div className="flex-1">
           <div className="flex items-center gap-4 mb-4">
             <h1 className="text-2xl font-light">{user.username}</h1>
-            
+
             {/* Botón de acción: Editar o Seguir */}
             {isCurrentUser ? (
               <button
@@ -93,7 +76,7 @@ export default function UserProfilePage() {
               </button>
             )}
           </div>
-          
+
           <div className="hidden md:flex gap-8 mb-4">
             <span className="text-sm">
               <strong>{0}</strong> publicaciones
@@ -116,11 +99,11 @@ export default function UserProfilePage() {
       {/* Placeholder para publicaciones */}
       <div className="border-t border-gray-300 pt-4 dark:border-zinc-700">
         <div className="text-center py-8 text-gray-400 dark:text-gray-500">
-            <p>Mostrando publicaciones de <strong>{user.username}</strong></p>
+          <p>Mostrando publicaciones de <strong>{user.username}</strong></p>
         </div>
         <div className="grid grid-cols-3 gap-1 md:gap-4">
           {[1, 2, 3, 4, 5, 6].map((item) => (
-            <div 
+            <div
               key={item}
               className="aspect-square bg-gray-200 dark:bg-zinc-800 hover:opacity-80 transition-opacity cursor-pointer flex items-center justify-center"
             >
@@ -130,6 +113,5 @@ export default function UserProfilePage() {
         </div>
       </div>
     </section>
-  );
+  )
 }
-
