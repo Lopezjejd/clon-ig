@@ -2,8 +2,11 @@ import { ReactNode } from "react";
 import Header  from "./Header";
 import Sidebar from "./Sidebar";
 import NavBottom from "./NavBottom";
+import { LOGGED_IN_USER } from "@/app/data/UsersData";
+
 
 export default function MainLayout({children}:{children:ReactNode}){
+    const initialHref = `/profile/${LOGGED_IN_USER.username}-${LOGGED_IN_USER.id}`;
     return (
         <div>
             <Header></Header>
@@ -13,7 +16,7 @@ export default function MainLayout({children}:{children:ReactNode}){
               <Sidebar></Sidebar>
             </section>
             </main>
-       <NavBottom></NavBottom>
+       <NavBottom initialHref={initialHref}></NavBottom>
         </div>
     )
 }

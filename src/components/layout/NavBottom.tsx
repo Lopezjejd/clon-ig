@@ -1,42 +1,18 @@
-'use client'
-
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
-import { LOGGED_IN_USER } from '@/app/data/UsersData'
-export default function NavBottom() {
-  const pathname = usePathname()
 
-  const isActive = (path: string) => pathname === path
-
+export default function NavBottom({ initialHref }: { initialHref: string }) {
+  // Server Component: no client-only hooks or state.
   return (
     <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-300">
       <div className="flex justify-around items-center p-3">
-        <Link 
-          href="/" 
-          className={`p-3 ${isActive('/') ? 'text-blue-500' : 'text-gray-600'}`}
-        >
-          🏠
-        </Link>
-        <Link 
-          href="/explore" 
-          className={`p-3 ${isActive('/explore') ? 'text-blue-500' : 'text-gray-600'}`}
-        >
- 
-          🔍
-        </Link>
-                 {/* ✨ NUEVO: Link a la Página de Crear Post ✨ */}
-        <Link 
-          href="/create" 
-          className={`p-3 text-lg ${isActive('/create') ? 'text-blue-500' : 'text-gray-600 dark:text-gray-400'}`}
-        >
-          ➕
-        </Link>
-        <Link 
-          href={`/profile/${LOGGED_IN_USER.id}`}
-          className={`p-3 ${isActive('/profile') ? 'text-blue-500' : 'text-gray-600'}`}
-        >
-          👤
-        </Link>
+        <Link href="/" className="p-3 text-gray-600">🏠</Link>
+
+        <Link href="/explore" className="p-3 text-gray-600">🔍</Link>
+
+        {/* Link a la página de crear post */}
+        <Link href="/create" className="p-3 text-lg text-gray-600 dark:text-gray-400">➕</Link>
+
+        <Link href={initialHref} className="p-3 text-gray-600">👤</Link>
       </div>
     </nav>
   )
