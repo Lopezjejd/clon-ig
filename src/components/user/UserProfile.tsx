@@ -3,6 +3,8 @@
 import React from "react";
 import Image from "next/image";
 import type { User } from "@/types/User";
+import NextLink from "next/link";
+import Link from "next/link";
 
 type Props = {
   user: User;
@@ -27,8 +29,8 @@ export default function UserProfile({
     : user.username.slice(0, 2).toUpperCase();
 
   return (
-    <a
-      href="#"
+    <Link
+      href={`/profile/${encodeURIComponent(user.username)}-${user.id}`}
       onClick={(e) => {
         if (onClick) {
           e.preventDefault();
@@ -74,6 +76,6 @@ export default function UserProfile({
           <div className="text-xs text-gray-500 truncate">{user.fullName}</div>
         ) : null}
       </div>
-    </a>
+    </Link>
   );
 }

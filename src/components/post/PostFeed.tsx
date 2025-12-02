@@ -25,11 +25,11 @@ export default function PostFeed({post}:Props){
         const openModal = () => setIsModalOpen(true);
         const closeModal = () => setIsModalOpen(false);
 return (
-        <article className="bg-gray-200
+        <article className="
         m-auto
         max-w-xl
         p-10
-        text-black flex flex-col justify-center"
+         flex flex-col justify-center"
     >
       <UserProfile user={post.user}></UserProfile>
          <Image
@@ -40,7 +40,7 @@ return (
          height={300}
          ></Image>
          <div className="flex flex-col justify-center
-         bg-gray-300 p-5 rounded-b-2xl">
+          p-5 rounded-b-2xl">
             <p className="font-bold">{post.caption}</p>
             <span className="flex m-2 gap-4">
                 <button className="cursor-pointer"

@@ -4,7 +4,9 @@
 import React from 'react'
 import { notFound, redirect } from 'next/navigation'
 import { MOCK_USERS, LOGGED_IN_USER } from '@/app/data/UsersData'
-
+import { Post } from '@/types/Post';
+import { MOCK_FEED_POSTS } from '@/app/data/feedData';
+import PostFeed from '@/components/post/PostFeed';
 // TIP: adapta este type a tu modelo real
 type User = {
   id: string | number
@@ -60,7 +62,7 @@ async function getUserById(id: string): Promise<User | null> {
 
 export default async function UserProfilePage({ params }: Props) {
   // 1) Validación básica del param
-  const rawPath = params?.path
+  const rawPath = params?.path //? para evitar errores si params es undefined
   if (!rawPath) {
     console.error('[UserProfile] params.path ausente')
     return notFound()
@@ -111,6 +113,8 @@ export default async function UserProfilePage({ params }: Props) {
   const user: User = found
   const isCurrentUser = String(user.id) === String(LOGGED_IN_USER.id)
 
+  const post:Post[] = MOCK_FEED_POSTS.filter((p) => String(p.user.id) === String(user.id));
+  console.log("Posts del usuario:", post);
   // 6) Render (Server Component): HTML pre-hecho por el servidor en cada request
   return (
     <section className="max-w-4xl mx-auto p-4 pt-10">
@@ -148,15 +152,15 @@ export default async function UserProfilePage({ params }: Props) {
             )}
           </div>
 
-          <div className="hidden md:flex gap-8 mb-4">
+          <div className=" md:flex gap-8 mb-4">
             <span className="text-sm">
               <strong>{0}</strong> publicaciones
             </span>
             <span className="text-sm">
-              <strong>{0}</strong> seguidores
+              <strong> {0}</strong> seguidores
             </span>
             <span className="text-sm">
-              <strong>{0}</strong> seguidos
+              <strong> {0}</strong> seguidos
             </span>
           </div>
 
@@ -174,15 +178,10 @@ export default async function UserProfilePage({ params }: Props) {
             Mostrando publicaciones de <strong>{user.username}</strong>
           </p>
         </div>
-        <div className="grid grid-cols-3 gap-1 md:gap-4">
-          {[1, 2, 3, 4, 5, 6].map((item) => (
-            <div
-              key={item}
-              className="aspect-square bg-gray-200 dark:bg-zinc-800 hover:opacity-80 transition-opacity cursor-pointer flex items-center justify-center"
-            >
-              <span className="text-gray-500 dark:text-gray-400">📷 Post {item}</span>
-            </div>
-          ))}
+        <div className="grid grid-cols-1 gap-1 md:gap-4">
+          {post && post.length >= 1 ? post.map((item) => (
+            <PostFeed key={item.id} post={item}></PostFeed>
+          )): <p>este usuario no ah publicado nada a mamar</p>}
         </div>
       </div>
     </section>
