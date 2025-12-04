@@ -1,115 +1,243 @@
-"use client"
-import Image from 'next/image';
-import { useState,useEffect,useRef } from 'react';
+"use client";
+import Image from "next/image";
+import { useState, useEffect, useRef } from "react";
 import Story from "./Story";
-import type { User } from '@/types/User';
-import Viewer from './StoryViewer';
-import UserProfile from "@/components/user/UserProfile"
+import type { User } from "@/types/User";
+import Viewer from "./StoryViewer";
+import UserProfile from "@/components/user/UserProfile";
+
 interface StoriesContainerProps {
   currentUser: User;
-
-    users: User[];
-
+  users: User[];
 }
-const INTERVAL_TIME = 4000; // 5 segundos
 
-export default function StoriesContainer({currentUser, users}: StoriesContainerProps) {
-     const [openId, setOpenId] = useState<string | null>(null);
-     
-  const openStory = (id: string) => {
-    setOpenId(id);
+const INTERVAL_TIME = 4000; // 4 segundos
+
+export default function StoriesContainer({ currentUser, users }: StoriesContainerProps) {
+  const [openUserId, setOpenUserId] = useState<string | null>(null);
+  const [currentStoryIndex, setCurrentStoryIndex] = useState<number>(0);
+
+  // storyVersion: contador que forzará remount/regen de la animación en Viewer
+  const [storyVersion, setStoryVersion] = useState<number>(0);
+
+  const openUserIdRef = useRef<string | null>(openUserId);
+  const currentStoryIndexRef = useRef<number>(currentStoryIndex);
+  const intervalIdRef = useRef<number | null>(null);
+
+  useEffect(() => { openUserIdRef.current = openUserId }, [openUserId]);
+  useEffect(() => { currentStoryIndexRef.current = currentStoryIndex }, [currentStoryIndex]);
+
+  const usersWithStories = users.filter(
+    (u) => Array.isArray(u.stories) && u.stories.length > 0
+  );
+
+  const clearIntervalIfAny = () => {
+    if (intervalIdRef.current !== null) {
+      clearInterval(intervalIdRef.current);
+      intervalIdRef.current = null;
+    }
   };
-  const close = () => setOpenId(null);
-  const intervalIdRef = useRef<NodeJS.Timeout | null>(null);
-  const usersWithStories = users.filter((user) => user.stories && user.stories.mediaUrl);
-  useEffect(() => {
-    if (!openId)  return;
-     const updateStory = () => {
-        setOpenId((prevId) => {
-            if (!prevId) return null;
-            if(usersWithStories.length ===  0) return null;
-        
-            const currentIndex = usersWithStories.findIndex((u) => u.id === prevId);
-            if (currentIndex === -1) return null;
 
-            
-            const nextIndex = (currentIndex + 1) ;
-            //% se usa para volver al inicio
-            if(nextIndex >= usersWithStories.length  ) return null
-            //   
+  // --- CLOSE SIEMPRE ARRIBA PARA EL SCOPE ---
+  const close = () => {
+    setOpenUserId(null);
+    setCurrentStoryIndex(0);
+    clearIntervalIfAny();
+  };
 
+  // --- NEXT ---
+  const advanceStory = () => {
+    const currentUserId = openUserIdRef.current;
+    if (!currentUserId) return;
 
+    const uIndex = usersWithStories.findIndex((u) => u.id === currentUserId);
+    if (uIndex === -1) {
+      close();
+      return;
+    }
 
-            //ya que si nextIndex es igual a users.length, vuelve a 0
-            return usersWithStories[nextIndex].id;
-        });
-     }
-        intervalIdRef.current = setInterval(updateStory, INTERVAL_TIME);
-        return () => {
-            if (intervalIdRef.current !== null){
-                clearInterval(intervalIdRef.current);
-                intervalIdRef.current = null;
-            }
-            } 
-  }), [openId, usersWithStories];
-
-  const current = users.find((u) => u.id === openId) ?? null;
-    return (
-            // Usamos flex-shrink-0 en los hijos y overflow-x-auto en el padre para el scroll horizontal
-    <div className="flex gap-4 p-4 bg-white border-b overflow-x-auto scrollbar-hide"> 
-      
-      {/* 1. Tu Story (hardcodeado, usa el prop isYours) */}
-      <Story 
-        user={currentUser} 
-        isYours={true}
-        onOpenViewer={openStory} 
-      />
-
-      {/* 2. Stories de otros (mapeadas) */}
-      {
-        
-        users.map((user) => {
-          // Nota: En una app real, la data debería estar ya combinada para evitar este find
-      
-          
-          if (!user.stories) return null;
-          
-          return (
-            <Story 
-              key={`user-story-${user.id}${user.username}`}  
-              user={user} 
-              onOpenViewer={openStory}
-            />
-          );
-        })
+    const userStories = usersWithStories[uIndex].stories;
+    if (!Array.isArray(userStories) || userStories.length === 0) {
+      const nextUserIndex = uIndex + 1;
+      if (nextUserIndex >= usersWithStories.length) {
+        close();
+        return;
       }
-        {/* Story Viewer Modal */}
-<Viewer isOpen={!!openId} onClose={close}>
-  {current?.stories ? (
-    <div className="w-full h-[80vh] grid place-items-center overflow-y-hidden">
-     
-      {/* contenedor que limita ancho máximo y evita overflow */}
-      <div className="relative w-full h-full max-w-[900px] max-h-full rounded-md p-1  overflow-hidden bg-black">
-    
-         <UserProfile user={current} className='text-white absolute top-4' ></UserProfile>
-        {/* 
-          - fill hace que la <Image /> llene el contenedor relativo
-          - object-contain mantiene la relación y centra la imagen
-        */}
-        <Image
-          src={current.stories.mediaUrl}
-          alt={current.username ?? "Historia de usuario"}
-          fill
-          className="object-contain"
-          sizes="(max-width: 900px) 95vw, 900px"
-          priority={false}
-        />
-      </div>
+      setOpenUserId(usersWithStories[nextUserIndex].id);
+      setCurrentStoryIndex(0);
+      setStoryVersion((v) => v + 1); // forzar remount en Viewer
+      return;
+    }
+
+    const nextIndex = currentStoryIndexRef.current + 1;
+
+    if (nextIndex < userStories.length) {
+      setCurrentStoryIndex(nextIndex);
+      setStoryVersion((v) => v + 1); // forzar remount en Viewer
+      return;
+    }
+
+    const nextUserIndex = uIndex + 1;
+    if (nextUserIndex >= usersWithStories.length) {
+      close();
+      return;
+    }
+
+    setOpenUserId(usersWithStories[nextUserIndex].id);
+    setCurrentStoryIndex(0);
+    setStoryVersion((v) => v + 1); // forzar remount en Viewer
+  };
+
+  // --- PREVIOUS ---
+  const retreatStory = () => {
+    const currentUserId = openUserIdRef.current;
+    if (!currentUserId) return;
+
+    const uIndex = usersWithStories.findIndex((u) => u.id === currentUserId);
+    if (uIndex === -1) {
+      close();
+      return;
+    }
+
+    const userStories = usersWithStories[uIndex].stories;
+    if (!Array.isArray(userStories) || userStories.length === 0) {
+      const prevUserIndex = uIndex - 1;
+      if (prevUserIndex < 0) {
+        close();
+        return;
+      }
+
+      const prevUser = usersWithStories[prevUserIndex];
+      if (!prevUser || !Array.isArray(prevUser.stories) || prevUser.stories.length === 0) {
+        close();
+        return;
+      }
+
+      setOpenUserId(prevUser.id);
+      setCurrentStoryIndex(prevUser.stories.length - 1);
+      setStoryVersion((v) => v + 1);
+      return;
+    }
+
+    const prevIndex = currentStoryIndexRef.current - 1;
+    if (prevIndex >= 0) {
+      setCurrentStoryIndex(prevIndex);
+      setStoryVersion((v) => v + 1);
+      return;
+    }
+
+    const prevUserIndex = uIndex - 1;
+    if (prevUserIndex < 0) {
+      close();
+      return;
+    }
+
+    const prevUser = usersWithStories[prevUserIndex];
+    if (!prevUser || !Array.isArray(prevUser.stories) || prevUser.stories.length === 0) {
+      close();
+      return;
+    }
+
+    setOpenUserId(prevUser.id);
+    setCurrentStoryIndex(prevUser.stories.length - 1);
+    setStoryVersion((v) => v + 1);
+  };
+
+  const startInterval = () => {
+    clearIntervalIfAny();
+    intervalIdRef.current = window.setInterval(() => {
+      advanceStory();
+    }, INTERVAL_TIME);
+  };
+
+  const openStory = (userId: string, index = 0) => {
+    setOpenUserId(userId);
+    setCurrentStoryIndex(index);
+    setStoryVersion((v) => v + 1); // al abrir, forzamos el remount para que las barras arranquen limpias
+  };
+
+  useEffect(() => {
+    if (!openUserId) {
+      clearIntervalIfAny();
+      return;
+    }
+    startInterval();
+    return () => clearIntervalIfAny();
+  }, [openUserId, usersWithStories]);
+
+  const handleNextClick = (e?: React.MouseEvent) => {
+    e?.stopPropagation();
+    clearIntervalIfAny();
+    advanceStory();
+    startInterval();
+  };
+
+  const handlePrevClick = (e?: React.MouseEvent) => {
+    e?.stopPropagation();
+    clearIntervalIfAny();
+    retreatStory();
+    startInterval();
+  };
+
+  const current = users.find((u) => u.id === openUserId) ?? null;
+  const currentStory = current?.stories?.[currentStoryIndex] ?? null;
+
+  return (
+    <div className="flex gap-4 p-4 bg-white border-b overflow-x-auto scrollbar-hide">
+      <Story user={currentUser} isYours={true} onOpenViewer={openStory} />
+
+      {users.map((user) =>
+        user.stories && user.stories.length > 0 ? (
+          <Story
+            key={`user-story-${user.id}-${user.username}`}
+            user={user}
+            onOpenViewer={openStory}
+          />
+        ) : null
+      )}
+
+      <Viewer
+        storiesNumber={current?.stories ? current.stories.length : 0}
+        isOpen={!!openUserId}
+        onClose={close}
+        // nuevas props para el progress bar control
+        activeIndex={currentStoryIndex}
+        activeKey={storyVersion}
+        durationMs={INTERVAL_TIME}
+      >
+        {current && currentStory ? (
+          <div className="w-full h-[80vh] grid place-items-center overflow-y-hidden">
+            <div className="relative w-full h-full max-w-[900px] rounded-md p-1 overflow-hidden bg-black">
+              <UserProfile user={current} className="text-white absolute top-4" />
+
+              <button
+                aria-label="Anterior"
+                onClick={handlePrevClick}
+                className="absolute left-2 top-1/2 -translate-y-1/2 z-50 bg-black/30 hover:bg-black/50 text-white p-2 rounded-full"
+              >
+                ‹
+              </button>
+              <button
+                aria-label="Siguiente"
+                onClick={handleNextClick}
+                className="absolute right-2 top-1/2 -translate-y-1/2 z-50 bg-black/30 hover:bg-black/50 text-white p-2 rounded-full"
+              >
+                ›
+              </button>
+
+              <Image
+                src={currentStory.mediaUrl}
+                alt={current.username ?? "Historia"}
+                fill
+                className="object-contain"
+              />
+            </div>
+          </div>
+        ) : (
+          <div className="py-12 text-black">Cargando...</div>
+        )}
+      </Viewer>
     </div>
-  ) : (
-    <div className="py-12">Cargando...</div>
-  )}
-</Viewer>
-    </div>
-    )
+  );
 }
+
